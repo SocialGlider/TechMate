@@ -11,6 +11,7 @@ backend/node_modules/
 backend/.env
 backend/dist/
 backend/build/
+backend/config.env
 
 # React (frontend)
 frontend/node_modules/
