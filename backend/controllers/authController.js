@@ -246,3 +246,25 @@ exports.resetPassword = catchAsync(async(req,res,next)=>{
     await user.save();
     createSendToken(user,200,res,"Password Reset Successfully");
 });
+
+exports.changePassword = catchAsync(async(req,res,next)=>{
+    const {currentPassword,newPassword,newPasswordConfirm} = req.body;
+    const {email} = req.user;
+    const user = await User.findOne({email}).select("+password");
+    if(!user){
+        return next (new AppError("User not found",404));
+    }
+    if(!(await user.correctPassword(currentPassword,user.password))){
+        return next (new AppError("Incorrect Password",400));
+    }
+
+    if(newPassword!==newPasswordConfirm){
+        return next (new AppError("New password and confirm password are not same",400)
+    );
+    }
+    user.password=newPassword;
+    user.passwordConfirm=newPasswordConfirm;
+
+    await user.save();
+    createSendToken(user,200,res,"Password changed successfully");
+});
