@@ -117,7 +117,7 @@ exports.resendOtp = catchAsync(async(req,res,next)=>{
         return next(new AppError("Email is required",400));
     }
 
-    const user = await user.findOne({email});
+    const user = await User.findOne({email});
     if(!user) {
         return next(new AppError("User Not Found",404));
     }
@@ -136,7 +136,7 @@ exports.resendOtp = catchAsync(async(req,res,next)=>{
 
     const htmlTemplate = loadTemplate("otpTemplate.hbs",{
         title:"otp Verification",
-        username:newUser.username,
+        username:user.username,
         otp,
         message:"Your one-time password (OTP) for account verification is : ",
      });
@@ -158,4 +158,19 @@ exports.resendOtp = catchAsync(async(req,res,next)=>{
         await user.save({validateBeforeSave:false})
         return next(new AppError("There is an error sending email. Try again later!", 500));
      }
+});
+
+exports.login = catchAsync(async(req,res,next)=>{
+    const {email,password} = req.body;
+    if(!email || !password){
+        return next(new AppError("Please provide email and password",400));
+    }
+
+    const user = await User.findOne({email}).select("+password");
+
+
+    if(!user || !(await user.correctPassword(password,user.password))){
+        return next(new AppError("Incorrect email or password",401));
+    }
+   createSendToken(user,200,res,"Login Successful");
 });
