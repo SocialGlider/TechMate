@@ -9,6 +9,7 @@ const path= require('path');
 const AppError = require('./utils/appError');
 const userRouter = require('./routes/userRoutes');
 const app = express();
+const postRouter = require("./routes/postRoutes");
 
 
 app.use("/",express.static("uploads"));
@@ -34,6 +35,7 @@ app.use(express.json({limit: "10kb"}));
 app.use(mongoSanitize());
 //Routes for users
 app.use("/api/v1/users",userRouter);
+app.use("/api/v1/posts",postRouter);
 
 app.all("*",(req,res,next)=>{
     next(new AppError(`Can't find ${req.originalUrl} on this server!`,404));
