@@ -6,7 +6,7 @@ const Signup = () => {
     <div className="w-full h-screen overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-7 gap-8">
             {/* Banner */}
-            <div className="md:col-span-4 h-screen  md:block">
+            <div className="lg:col-span-4 h-screen hidden lg:block">
                 <Image src="/images/ban.png" alt="signup" width={1000} height={1000} className="w-full h-full object-cover" />
             </div>
             {/* Form */}
