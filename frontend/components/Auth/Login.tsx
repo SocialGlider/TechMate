@@ -13,21 +13,17 @@ import { setAuthUser } from "@/store/authSlice";
 import { useRouter } from "next/navigation";
 
 interface FormData {
-    username: string;
     email: string;
     password: string;
-    passwordConfirm: string;
 }
 
-const Signup = () => {
+const Login = () => {
     const dispatch = useDispatch();
     const router = useRouter();
     const [isLoading, setIsLoading] = React.useState(false);
     const [formData, setFormData] = useState <FormData>({
-        username: "",
         email: "",
         password: "",
-        passwordConfirm: "",
     });
 
     const handleChange = (e:ChangeEvent<HTMLInputElement>):void => {
@@ -37,10 +33,10 @@ const Signup = () => {
 
     const handleSubmit = async(e:FormEvent) => {
         e.preventDefault();
-        const signupReq = async ()=>await axios.post(`${BASE_API_URL}/users/signup`, formData, {
+        const loginReq = async ()=>await axios.post(`${BASE_API_URL}/users/login`, formData, {
             withCredentials: true,
         });
-        const result = await handleAuthRequest(signupReq, setIsLoading);
+        const result = await handleAuthRequest(loginReq, setIsLoading);
 
         if(result){
             dispatch(setAuthUser(result.data.data.user));
@@ -61,16 +57,8 @@ const Signup = () => {
             </div>
             {/* Form */}
             <div className="lg:col-span-3 flex flex-col items-center justify-center h-screen ">
-                <h1 className="font-bold text-xl sm:text-2xl text-left uppercase mb-8">Sign Up with <span className="text-rose-600">Pixora</span></h1>
+                <h1 className="font-bold text-xl sm:text-2xl text-left uppercase mb-8">Login with <span className="text-rose-600">Pixora</span></h1>
                 <form onSubmit={handleSubmit} className="block w-[90%] sm:w-[80%] md:w-[60%] lg:w-[90%] xl:w-[80%]">
-                    <div className="mb-4">
-                        <label htmlFor="name" className="font-semibold mb-2 block">
-                            Username
-                        </label>
-                        <input type="text" name="username" placeholder="Username" className="px-4 py-3 bg-gray-200 rounded-lg w-full block outline-none" value={formData.username}
-                        onChange={handleChange}
-                        />
-                    </div>
                     <div className="mb-4">
                         <label htmlFor="email" className="font-semibold mb-2 block">
                             Email
@@ -80,18 +68,15 @@ const Signup = () => {
                     </div>
                     <div className="mb-4">
                         <PasswordInput label="Password" name="password" placeholder="Enter password" value={formData.password} onChange={handleChange} />
+                        <Link href="/auth/forget-password" className="mt-2 text-red-600 block font-semibold text-base cursor-pointer text-right">Forget Password</Link>
                     </div>
-                    <div className="mb-4">
-                        <PasswordInput name="passwordConfirm" label="Confirm Password" placeholder="Confirm Password" value={formData.passwordConfirm}
-                        onChange={handleChange} />
-                    </div>
-                    <LoadingButton size={"lg"} className="w-full mt-3" type="submit" isLoading={isLoading} >Sign Up Now</LoadingButton>
+                    <LoadingButton size={"lg"} className="w-full mt-3" type="submit" isLoading={isLoading} >Login Now</LoadingButton>
                 </form>
-                <h1 className="mt-4 text-lg text-gray-800 ">Already have account ?{" "} <Link href="/auth/signup/login"><span className="text-blue-800 underline cursor-pointer font-medium">Login Here</span>{" "}</Link></h1>
+                <h1 className="mt-4 text-lg text-gray-800 ">Don't have an accout ?{" "} <Link href="/auth/signup"><span className="text-blue-800 underline cursor-pointer font-medium">Signup Here</span>{" "}</Link></h1>
             </div>
         </div>
     </div>
   )
 };
 
-export default Signup;
+export default Login;
