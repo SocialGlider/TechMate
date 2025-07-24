@@ -46,7 +46,7 @@ const Signup = () => {
             dispatch(setAuthUser(result.data.data.user));
             console.log(result.data.data.user);
             toast.success(result.data.message);
-            router.push("/");
+            router.push("/auth/verify");
         }
 
     };
@@ -87,7 +87,7 @@ const Signup = () => {
                     </div>
                     <LoadingButton size={"lg"} className="w-full mt-3" type="submit" isLoading={isLoading} >Sign Up Now</LoadingButton>
                 </form>
-                <h1 className="mt-4 text-lg text-gray-800 ">Already have account ?{" "} <Link href="/auth/signup/login"><span className="text-blue-800 underline cursor-pointer font-medium">Login Here</span>{" "}</Link></h1>
+                <h1 className="mt-4 text-lg text-gray-800 ">Already have account ?{" "} <Link href="/auth/login"><span className="text-blue-800 underline cursor-pointer font-medium">Login Here</span>{" "}</Link></h1>
             </div>
         </div>
     </div>
