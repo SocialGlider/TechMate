@@ -8,8 +8,8 @@ import { handleAuthRequest } from "../utils/apiRequest";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "@/store/authSlice";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { RootState } from "@/store/store";
+import { useRouter } from "next/navigation";
 
 const Verify = () => {
     const dispatch = useDispatch();
