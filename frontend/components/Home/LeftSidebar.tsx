@@ -2,14 +2,29 @@
 import { Heart, HomeIcon, LogOutIcon, MessageCircle, Search, SquarePlus } from "lucide-react";
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { BASE_API_URL } from "@/server";
+import { setAuthUser } from "@/store/authSlice";
+import { toast } from "sonner";
 
 const LeftSidebar = () => {
     const user = useSelector((state:RootState)=>state.auth.user);
     const router = useRouter();
+    const dispatch= useDispatch();
+      const handleLogout = async()=>{
+        await axios.post(`${BASE_API_URL}/users/logout`,{},{withCredentials:true});
+        dispatch(setAuthUser(null));
+        toast.success("Logout Successfully");
+        router.push("/auth/login");
+      };
+      const handleSidebar=(label:string)=>{
+        if(label==="Home") router.push("/");
+        if(label==="Logout") handleLogout();
+      };
     const SidebarLinks = [
         {
             icon:<HomeIcon/>,
@@ -50,7 +65,7 @@ const LeftSidebar = () => {
         <div className="mt-6">
             {SidebarLinks.map((link)=>{
                 return (
-                    <div key={link.label} className="flex items-center mb-2 p-3 rounded-lg group cursor-pointer transition-all duration-200 hover:bg-gray-100 space-x-2">
+                    <div key={link.label} className="flex items-center mb-2 p-3 rounded-lg group cursor-pointer transition-all duration-200 hover:bg-gray-100 space-x-2" onClick={()=>handleSidebar(link.label)}>
                         <div className="group-hover:scale-110 transition-all duration-200">
                             {link.icon}
                         </div>

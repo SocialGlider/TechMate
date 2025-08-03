@@ -7,6 +7,7 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from 
 import { MenuIcon } from 'lucide-react';
 
 const Home = () => {
+  
   return (
     <div className="flex">
       <div className="w-[20%] hidden md:block border-r-2 h-screen fixed">
