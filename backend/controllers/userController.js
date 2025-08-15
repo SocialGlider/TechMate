@@ -9,7 +9,7 @@ exports.getProfile = catchAsync(async(req,res,next)=>{
     
     const user = await User.findById(id).select("-password -otp -otpExpires -resetPasswordOTP -resetPasswordOTPExpires -passwordConfirm"
     ).populate({
-        path:'post',
+        path:'posts',
         options:{sort:{createdAt: -1 } },
     }).populate({
         path:"savedPosts",
