@@ -3,18 +3,17 @@ import { BASE_API_URL } from "@/server";
 import { RootState } from "@/store/store";
 import { User } from "@/types";
 import axios from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { handleAuthRequest } from "../utils/apiRequest";
 import { Loader } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-
 const RightSidebar = () => {
   const user = useSelector((state:RootState)=>state.auth.user);
   const [suggestedUser,setSuggestedUser]=useState<User[]>([]);
   const [isLoading,setIsLoading]=useState(false);
-  //const router=useRouter();
+  const router=useRouter();
   console.log("SUGGESTED USER",suggestedUser);
   
   useEffect(()=>{
@@ -54,7 +53,7 @@ const RightSidebar = () => {
         <h1 className="font-medium cursor-pointer">See all</h1>
       </div>
       {suggestedUser?.slice(0,5).map((s_user)=>{
-        return <div key={s_user._id} className="mt-6 cursor-pointer">
+        return <div onClick={()=>{router.push(`/profile/${s_user._id}`)}} key={s_user._id} className="mt-6 cursor-pointer">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 cursor-pointer">
               <Avatar className="w-9 h-9">
@@ -63,7 +62,7 @@ const RightSidebar = () => {
           </Avatar>
           <div>
             <h1 className="font-bold">{s_user.username}</h1>
-            <p className="text-gray-700">{s_user.bio || "my profile Bio Here"}</p>
+            <p className="text-gray-700">{s_user.bio || "My profile Bio Here"}</p>
           </div>
             </div>
             <h1 className="font-medium text-blue-700 cursor-pointer">Details</h1>
