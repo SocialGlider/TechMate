@@ -11,6 +11,7 @@ import { BASE_API_URL } from '@/server';
 import axios from 'axios';
 import { handleAuthRequest } from '../utils/apiRequest';
 import { addPost } from '@/store/postSlice';
+import Image from 'next/image';
 type Props = {
     isOpen : boolean;
     onClose: ()=> void;
@@ -85,7 +86,7 @@ const CreatePostModel = ({isOpen,onClose}:Props) => {
         {previewImage ? (
             <div className='flex flex-col items-center justify-center text-center space-y-4'>
                 <div className='mt-4'>
-                    <img 
+                    <Image
                     src={previewImage} 
                     alt="Image"
                      width={400} 
