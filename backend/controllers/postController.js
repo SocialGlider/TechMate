@@ -145,7 +145,7 @@ exports.deletePost = catchAsync(async(req,res,next)=>{
     await Comment.deleteMany({post:id});
     //remove from cloudinaary
     if(post.image.publicId){
-        await cloudinary.uploader.destroy(post.imaage.publicId);
+        await cloudinary.uploader.destroy(post.image.publicId);
     }
     //remove the post
     await Post.findByIdAndDelete(id);
