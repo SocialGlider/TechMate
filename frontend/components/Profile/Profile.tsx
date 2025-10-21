@@ -80,8 +80,8 @@ const Profile = ({id}:Props) => {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
              <div>
-            <div className='flex items-center space-x-8'>
-              <h1 className='text-2xl font-bold'>{userProfile?.username}</h1>
+            <div className="flex items-center space-x-8">
+              <h1 className="text-2xl font-bold">{userProfile?.username}</h1>
               {isOwnProfile && (
                 <Link href="/edit-profile">
                <Button variant={"secondary"}>Edit Profile</Button>
@@ -93,7 +93,7 @@ const Profile = ({id}:Props) => {
                 </Button>
               )}
             </div>
-            <div className='flex items-center space-x-8 mt-6 mb-6'>
+            <div className="flex items-center space-x-8 mt-6 mb-6">
                 <div>
                     <span className='font-bold'>{userProfile?.posts.length}</span>
                     <span > Posts</span>
