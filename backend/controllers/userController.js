@@ -41,7 +41,7 @@ exports.editProfile = catchAsync(async(req,res,next)=>{
         cloudResponse=await uploadToCloudinary(fileUri);
     }
 
-    const user = await user.findById(userId).select("-password");
+    const user = await User.findById(userId).select("-password");
 
     if(!user)
         return next(new AppError("User Not Found",404));
@@ -49,7 +49,7 @@ exports.editProfile = catchAsync(async(req,res,next)=>{
 
     if(bio) 
         user.bio=bio;
-    if(profilePicture)
+    if(cloudResponse)
         user.profilePicture=cloudResponse.secure_url;
 
     await user.save({validateBeforeSave:false});
