@@ -21,7 +21,7 @@ exports.createPost = catchAsync(async(req,res,next)=>{
 
     let post = await Post.create({
         caption,
-        image:{
+        Image:{
             url:cloudResponse.secure_url,
             publicId:cloudResponse.public_id,
         },
