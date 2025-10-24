@@ -5,7 +5,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { handleAuthRequest } from "../utils/apiRequest";
-import { likeOrDislike, setPost } from "@/store/postSlice";
+import { addComment, likeOrDislike, setPost } from "@/store/postSlice";
 import { Bookmark, HeartIcon, Loader, MessageCircle, Send } from "lucide-react";
 import Post from "../Profile/Post";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -61,7 +61,17 @@ const Feed = () => {
     }
   };
 
-  const handleComment = async (id: string) => {};
+  const handleComment = async (id: string) => {
+    if(!comment) return;
+    const addCommentReq = async() => await axios.post(`${BASE_API_URL}/posts/comment/${id}`, { text: comment},{withCredentials: true}
+    );
+    const result = await handleAuthRequest(addCommentReq);
+    if(result?.data.status=="success") {
+      dispatch(addComment({postId: id,comment : result?.data.data.comment}));
+      toast.success("Comment Posted");
+      setComment("");
+    }
+  };
 
   // handle Loading state
   if (isLoading) {

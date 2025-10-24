@@ -201,7 +201,7 @@ exports.addComment = catchAsync(async(req,res,next)=>{
         user:userId,
         createdAt: Date.now(),
     });
-    post.comments.push(comment);
+    post.Comments.push(comment);
     await post.save({validateBeforeSave:false});
     await comment.populate({
         path:"user",

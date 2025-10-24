@@ -7,6 +7,11 @@ import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import DotButton from "./DotButton";
 import { Button } from "../ui/button";
+import axios from "axios";
+import { BASE_API_URL } from "@/server";
+import { handleAuthRequest } from "../utils/apiRequest";
+import { addComment } from "@/store/postSlice";
+import { toast } from "sonner";
 
 type Props ={
     user: User | null;
@@ -16,7 +21,17 @@ type Props ={
 const Comment = ({post,user}:Props) => {
     const [comment, setComment] = useState("");
     const dispatch = useDispatch();
-    const addCommentHandler = async(id:string)=>{};
+    const addCommentHandler = async(id:string)=>{
+        if(!comment) return;
+    const addCommentReq = async() => await axios.post(`${BASE_API_URL}/posts/comment/${id}`, { text: comment},{withCredentials: true}
+    );
+    const result = await handleAuthRequest(addCommentReq);
+    if(result?.data.status=="success") {
+      dispatch(addComment({postId: id,comment : result?.data.data.comment}));
+      toast.success("Comment Posted");
+      setComment("");
+    }
+    };
   return (
     <div>
         <Dialog>
@@ -60,7 +75,9 @@ const Comment = ({post,user}:Props) => {
                     <div className="p-4">
                         <div className="flex items-center gap-2">
                             <input type="text" value={comment} onChange={(e)=>setComment(e.target.value)} placeholder="Add a comment..." className="w-full outline-none border text-sm border-gray-300 p-2 rounded" />
-                            <Button variant={"outline"}>Send</Button>
+                            <Button onClick={()=>{
+                                if(post?._id) addCommentHandler(post?._id);
+                            }} variant={"outline"}>Send</Button>
                         </div>
                     </div>
                     </div>
