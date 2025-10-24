@@ -26,12 +26,12 @@ export interface Comment {
 export interface Post {
     _id: string;
     caption: string;
-    image?: {
+    Image?: {
         url: string;
         publicId: string;
     };
     user: User | undefined;
     likes: string[];
-    comments: Comment[];
+    Comments: Comment[];
     createdAt: string;
 }

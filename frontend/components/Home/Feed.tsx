@@ -74,7 +74,7 @@ const Feed = () => {
           </div>
           {/* Image */}
           <div className="mt-2">
-            <Image src={`${Post.image?.url}`} alt="Post" width={400} height={400} className="w-full"/>
+            <Image src={`${Post.Image?.url}`} alt="Post" width={400} height={400} className="w-full"/>
           </div>
         </div>
       })}

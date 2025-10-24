@@ -1,9 +1,10 @@
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const sharp = require("sharp");
-const { uploadToCloudinary } = require("../utils/cloudinary");
+const { uploadToCloudinary, cloudinary } = require("../utils/cloudinary");
 const User = require("../models/userModel");
 const Post = require("../models/postModel");
+const Comment = require("../models/commentModel");
 
 exports.createPost = catchAsync(async(req,res,next)=>{
     const {caption} = req.body;
@@ -55,7 +56,7 @@ exports.getAllPost = catchAsync(async(req,res,next)=>{
         path:'user',
         select:"username profilePicture bio"
     }).populate({
-        path:"comments",
+        path:"Comments",
         select:"text user",
         populate:{
             path:"user",
@@ -74,7 +75,7 @@ exports.getAllPost = catchAsync(async(req,res,next)=>{
 exports.getUserPosts = catchAsync(async(req,res,next)=>{
     const userId = req.params.id;
     const posts = await Post.find({user:userId}).populate({
-         path:"comments",
+         path:"Comments",
         select:"text user",
         populate:{
             path:"user",
@@ -144,8 +145,8 @@ exports.deletePost = catchAsync(async(req,res,next)=>{
     //remove comments
     await Comment.deleteMany({post:id});
     //remove from cloudinaary
-    if(post.image.publicId){
-        await cloudinary.uploader.destroy(post.image.publicId);
+    if(post.Image.publicId){
+        await cloudinary.uploader.destroy(post.Image.publicId);
     }
     //remove the post
     await Post.findByIdAndDelete(id);
