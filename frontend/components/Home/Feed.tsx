@@ -6,11 +6,12 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { handleAuthRequest } from "../utils/apiRequest";
 import { setPost } from "@/store/postSlice";
-import { Loader } from "lucide-react";
+import { Bookmark, HeartIcon, Loader, MessageCircle, Send } from "lucide-react";
 import Post from "../Profile/Post";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import DotButton from "../Helper/DotButton";
 import Image from "next/image";
+import Comment from "../Helper/Comment";
 
 const Feed = () => {
   const dispatch = useDispatch();
@@ -70,16 +71,34 @@ const Feed = () => {
               </Avatar>
               <h1>{Post.user?.username}</h1>
             </div>
-              <DotButton />
+              <DotButton post={Post} user={user} />
           </div>
           {/* Image */}
           <div className="mt-2">
             <Image src={`${Post.Image?.url}`} alt="Post" width={400} height={400} className="w-full"/>
           </div>
+          <div className="mt-3 flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <HeartIcon className="cursor-pointer" />
+              <MessageCircle className="cursor-pointer" />
+              <Send className="cursor-pointer" />
+            </div>
+            <Bookmark className="cursor-pointer" />
+          </div>
+          <h1 className="mt-2 text-sm font-semibold">
+            {Post.likes.length} likes
+          </h1>
+          <p className="mt-2 font-medium">{Post.caption}</p>
+          <Comment />
+          <div className="mt-2 flex items-center">
+            <input type="text" placeholder="Add a Comment.." className="flex-1 placeholder:text-gray-800 outline-none" value={comment} onChange={(e)=>setComment(e.target.value)} />
+            <p role="button" className="text-sm font-semibold text-blue-700 cursor-pointer" onClick={()=>{handleComment(Post._id)}}>Post</p>
+          </div>
+          <div className="pb-6 border-b-2"></div>
         </div>
       })}
     </div>
-  )
+  );
 };
 
 export default Feed
