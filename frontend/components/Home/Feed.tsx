@@ -13,6 +13,7 @@ import DotButton from "../Helper/DotButton";
 import Image from "next/image";
 import Comment from "../Helper/Comment";
 import { toast } from "sonner";
+import { setAuthUser } from "@/store/authSlice";
 
 const Feed = () => {
   const dispatch = useDispatch();
@@ -49,7 +50,16 @@ const Feed = () => {
     }
   };
 
-  const handleSaveUnsave = async (id: string) => {};
+  const handleSaveUnsave = async (id: string) => {
+    const result = await axios.post(`${BASE_API_URL}/posts/save-unsave-post/${id}`,
+      {},
+      {withCredentials : true}
+    );
+    if(result.data.status=="success"){
+      dispatch(setAuthUser(result.data.data.user));
+      toast.success(result.data.message)
+    }
+  };
 
   const handleComment = async (id: string) => {};
 
@@ -115,7 +125,13 @@ const Feed = () => {
                 <MessageCircle className="cursor-pointer" />
                 <Send className="cursor-pointer" />
               </div>
-              <Bookmark className="cursor-pointer" />
+              <Bookmark onClick={()=>(handleSaveUnsave(post?._id)
+              )}
+               className={`cursor-pointer ${(user?.savedPosts as string[])?.some(
+                (savedPostId : string)=> savedPostId === post._id
+               )
+                ? "text-red-500" : ""
+               }`} />
             </div>
             <h1 className="mt-2 text-sm font-semibold">
               {post.likes.length} likes
