@@ -18,7 +18,7 @@ const postSlice = createSlice({
             state.posts.unshift(action.payload);
         },
         deletePost:(state,action:PayloadAction<string>)=>{
-            state.posts.filter((post)=>post._id !== action.payload );
+            state.posts = state.posts.filter((post)=>post._id !== action.payload );
         },
         likeOrDislike:(state,action:PayloadAction<{postId:string;userId:string}>)=>{
             const post = state.posts.find((post)=>post._id===action.payload.postId);
@@ -38,7 +38,7 @@ const postSlice = createSlice({
         )=>{
             const post = state.posts.find((post)=>post._id===action.payload.postId);
             if(post){
-                post.comments.push(action.payload.comment);
+                post.Comments.push(action.payload.comment);
             }
         },
     },

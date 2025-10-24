@@ -89,7 +89,7 @@ const Feed = () => {
             {Post.likes.length} likes
           </h1>
           <p className="mt-2 font-medium">{Post.caption}</p>
-          <Comment />
+          <Comment post={Post} user={user}  />
           <div className="mt-2 flex items-center">
             <input type="text" placeholder="Add a Comment.." className="flex-1 placeholder:text-gray-800 outline-none" value={comment} onChange={(e)=>setComment(e.target.value)} />
             <p role="button" className="text-sm font-semibold text-blue-700 cursor-pointer" onClick={()=>{handleComment(Post._id)}}>Post</p>
