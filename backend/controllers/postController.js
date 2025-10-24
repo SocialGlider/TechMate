@@ -174,7 +174,7 @@ exports.likeOrDislikePost = catchAsync(async(req,res,next)=>{
         });
     }
     else{
-      await Post.findbyIdAndUpdate(id,
+      await Post.findByIdAndUpdate(id,
         {$addToSet : {likes:userId}},
         {new:true}
       );
