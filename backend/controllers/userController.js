@@ -135,3 +135,36 @@ exports.getMe = catchAsync(async(req,res,next)=>{
         },
     });
 });
+
+exports.searchUsers = catchAsync(async(req,res,next)=>{
+    const {q} = req.query;
+    const loginUserId = req.user._id;
+
+    if(!q){
+        return res.status(200).json({
+            status: "success",
+            data: {
+                users: [],
+            },
+        });
+    }
+
+    const users = await User.find({
+        $and:[
+            {_id:{$ne: loginUserId}},
+            {
+                $or:[
+                    {username: {$regex: q, $options: 'i'}},
+                    {email: {$regex: q, $options: 'i'}},
+                ]
+            }
+        ]
+    }).select("-password -otp -otpExpires -resetPasswordOTP -resetPasswordOTPExpires -passwordConfirm");
+
+    res.status(200).json({
+        status: "success",
+        data: {
+            users,
+        },
+    });
+});

@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { handleAuthRequest } from '../utils/apiRequest';
-import { Bookmark, Grid, Loader } from 'lucide-react';
+import { Bookmark, Grid, Loader, MessageCircle } from 'lucide-react';
 import LeftSidebar from '../Home/LeftSidebar';
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from '../ui/sheet';
 import { MenuIcon } from 'lucide-react';
@@ -89,9 +89,15 @@ const Profile = ({id}:Props) => {
               </Link>
               )}
               {!isOwnProfile &&(
-                <Button onClick={()=>{handleFollowUnfollow(id);}} variant={isFollowing?"destructive":"secondary"}>
-                    {isFollowing? "Unfollow" : "Follow"}
-                </Button>
+                <>
+                  <Button onClick={()=>{handleFollowUnfollow(id);}} variant={isFollowing?"destructive":"secondary"}>
+                      {isFollowing? "Unfollow" : "Follow"}
+                  </Button>
+                  <Button onClick={()=>{router.push(`/messages?user=${id}`);}} variant="secondary" className="flex items-center space-x-2">
+                    <MessageCircle className="w-4 h-4" />
+                    <span>Message</span>
+                  </Button>
+                </>
               )}
             </div>
             <div className="flex items-center space-x-8 mt-6 mb-6">

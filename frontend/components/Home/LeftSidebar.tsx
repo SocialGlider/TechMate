@@ -28,6 +28,8 @@ const LeftSidebar = () => {
         if(label==="Logout") handleLogout();
         if(label==="Profile")router.push(`/profile/${user?._id}`);
         if(label==="Create")setIsDialogOpen(true);
+        if(label==="Search")router.push("/search");
+        if(label==="Message")router.push("/messages");
       };
     const SidebarLinks = [
         {

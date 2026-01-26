@@ -9,7 +9,7 @@ const { signup,
     changePassword,
 } = require("../controllers/authController");
 const isAuthenticated = require("../middleware/isAuthenticated");
-const { getProfile, editProfile, suggestedUser, followUnfollow, getMe } = require("../controllers/userController");
+const { getProfile, editProfile, suggestedUser, followUnfollow, getMe, searchUsers } = require("../controllers/userController");
 const upload = require("../middleware/multer");
 
 const router = express.Router();
@@ -25,10 +25,9 @@ router.post("/reset-password",resetPassword);
 router.post("/change-password",isAuthenticated,changePassword);
 
 //User routes
+router.get("/search", isAuthenticated, searchUsers);
 router.get("/profile/:id", getProfile);
 router.post("/edit-profile",isAuthenticated,upload.single("profilePicture"),editProfile);
-
-
 router.get("/suggested-user", isAuthenticated, suggestedUser);
 router.post("/follow-unfollow/:id",isAuthenticated, followUnfollow);
 router.get("/me",isAuthenticated,getMe);
