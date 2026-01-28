@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { handleAuthRequest } from "../utils/apiRequest";
 import { addComment, likeOrDislike, setPost } from "@/store/postSlice";
-import { Bookmark, HeartIcon, Loader, MessageCircle, Send } from "lucide-react";
+import { Bookmark, Bookmark as BookmarkFilled, Heart, HeartIcon, Loader, MessageCircle, Send } from "lucide-react";
 import Post from "../Profile/Post";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import DotButton from "../Helper/DotButton";
@@ -122,26 +122,37 @@ const Feed = () => {
             </div>
             <div className="mt-3 flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <HeartIcon
-                  onClick={() => {
-                    handleLikeDislike(post?._id);
-                  }}
-                  className={`cursor-pointer ${
-                    user?._id && post.likes.includes(user?._id)
-                      ? "text-red-500"
-                      : ""
-                  }`}
-                />
+                {user?._id && post.likes.includes(user?._id) ? (
+                  <Heart
+                    fill="red"
+                    color="red"
+                    onClick={() => handleLikeDislike(post?._id)}
+                    className="cursor-pointer"
+                  />
+                ) : (
+                  <HeartIcon
+                    onClick={() => handleLikeDislike(post?._id)}
+                    className="cursor-pointer"
+                  />
+                )}
                 <MessageCircle className="cursor-pointer" />
                 <Send className="cursor-pointer" />
               </div>
-              <Bookmark onClick={()=>(handleSaveUnsave(post?._id)
+              {(user?.savedPosts as string[])?.some(
+                (savedPostId: string) => savedPostId === post._id
+              ) ? (
+                <Bookmark
+                  fill="black"
+                  color="black"
+                  onClick={() => handleSaveUnsave(post?._id)}
+                  className="cursor-pointer"
+                />
+              ) : (
+                <Bookmark
+                  onClick={() => handleSaveUnsave(post?._id)}
+                  className="cursor-pointer"
+                />
               )}
-               className={`cursor-pointer ${(user?.savedPosts as string[])?.some(
-                (savedPostId : string)=> savedPostId === post._id
-               )
-                ? "text-red-500" : ""
-               }`} />
             </div>
             <h1 className="mt-2 text-sm font-semibold">
               {post.likes.length} likes
