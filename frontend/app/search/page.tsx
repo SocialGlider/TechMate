@@ -75,7 +75,7 @@ const SearchPage = () => {
       <div className="mb-6">
         <input
           type="text"
-          placeholder="Search users by name or email..."
+          placeholder="Search users by name..."
           value={searchQuery}
           onChange={(e) => {
             setSearchQuery(e.target.value);
@@ -122,7 +122,6 @@ const SearchPage = () => {
                 </Avatar>
                 <div>
                   <p className="font-semibold text-base">{searchUser.username}</p>
-                  <p className="text-sm text-gray-500">{searchUser.email}</p>
                 </div>
               </div>
               <Button

@@ -153,13 +153,10 @@ exports.searchUsers = catchAsync(async(req,res,next)=>{
         $and:[
             {_id:{$ne: loginUserId}},
             {
-                $or:[
-                    {username: {$regex: q, $options: 'i'}},
-                    {email: {$regex: q, $options: 'i'}},
-                ]
+                username: {$regex: q, $options: 'i'}
             }
         ]
-    }).select("-password -otp -otpExpires -resetPasswordOTP -resetPasswordOTPExpires -passwordConfirm");
+    }).select("-password -otp -otpExpires -resetPasswordOTP -resetPasswordOTPExpires -passwordConfirm -email");
 
     res.status(200).json({
         status: "success",

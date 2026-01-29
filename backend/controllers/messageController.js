@@ -63,7 +63,6 @@ exports.getConversations = catchAsync(async(req,res,next)=>{
                 user: {
                     _id: "$user._id",
                     username: "$user.username",
-                    email: "$user.email",
                     profilePicture: "$user.profilePicture"
                 },
                 lastMessage: 1,

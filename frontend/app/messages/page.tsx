@@ -13,7 +13,6 @@ import { useSearchParams } from "next/navigation";
 interface User {
   _id: string;
   username: string;
-  email: string;
   profilePicture: string;
 }
 
@@ -240,9 +239,6 @@ const MessagesPage = () => {
               <div>
                 <p className="font-semibold">
                   {selectedConversation?.user.username || directUser?.username}
-                </p>
-                <p className="text-gray-500 text-sm">
-                  {selectedConversation?.user.email || directUser?.email}
                 </p>
               </div>
             </div>

@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { handleAuthRequest } from "../utils/apiRequest";
 import { addComment, likeOrDislike, setPost } from "@/store/postSlice";
-import { Bookmark, Bookmark as BookmarkFilled, Heart, HeartIcon, Loader, MessageCircle, Send } from "lucide-react";
+import { Bookmark, Bookmark as BookmarkFilled, Heart, HeartIcon, Loader, MessageCircle, Send, Share2 } from "lucide-react";
 import Post from "../Profile/Post";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import DotButton from "../Helper/DotButton";
@@ -59,6 +59,50 @@ const Feed = () => {
       dispatch(setAuthUser(result.data.data.user));
       toast.success(result.data.message)
     }
+  };
+
+  const handleSharePost = async (post: any) => {
+    try {
+      // Check if Web Share API is available
+      if (navigator.share && navigator.canShare) {
+        // Fetch the image blob
+        const response = await fetch(post.Image?.url);
+        const blob = await response.blob();
+        const file = new File([blob], `post-${post._id}.jpg`, { type: 'image/jpeg' });
+
+        // Check if the file can be shared
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: post.caption || 'Check out this post!',
+          });
+          toast.success('Post shared successfully!');
+        } else {
+          // Fallback: download the image
+          downloadImage(post.Image?.url, `post-${post._id}.jpg`);
+          toast.success('Image downloaded to your device!');
+        }
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        downloadImage(post.Image?.url, `post-${post._id}.jpg`);
+        toast.success('Image downloaded to your device!');
+      }
+    } catch (error: any) {
+      if (error.name !== 'AbortError') {
+        console.error('Share error:', error);
+        downloadImage(post.Image?.url, `post-${post._id}.jpg`);
+        toast.success('Image downloaded to your device!');
+      }
+    }
+  };
+
+  const downloadImage = (url: string, filename: string) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleComment = async (id: string) => {
@@ -136,7 +180,11 @@ const Feed = () => {
                   />
                 )}
                 <MessageCircle className="cursor-pointer" />
-                <Send className="cursor-pointer" />
+                <Share2 
+                  onClick={() => handleSharePost(post)}
+                  className="cursor-pointer"
+                  title="Share post"
+                />
               </div>
               {(user?.savedPosts as string[])?.some(
                 (savedPostId: string) => savedPostId === post._id
