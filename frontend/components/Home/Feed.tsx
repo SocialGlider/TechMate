@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { handleAuthRequest } from "../utils/apiRequest";
 import { addComment, likeOrDislike, setPost } from "@/store/postSlice";
-import { Bookmark, Bookmark as BookmarkFilled, Heart, HeartIcon, Loader, MessageCircle, Send, Share2 } from "lucide-react";
+import { Bookmark, Bookmark as BookmarkFilled, Heart, HeartIcon, Loader, MessageCircle, Share2, X } from "lucide-react";
 import Post from "../Profile/Post";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import DotButton from "../Helper/DotButton";
@@ -14,6 +14,8 @@ import Image from "next/image";
 import Comment from "../Helper/Comment";
 import { toast } from "sonner";
 import { setAuthUser } from "@/store/authSlice";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Button } from "../ui/button";
 
 const Feed = () => {
   const dispatch = useDispatch();
@@ -23,6 +25,11 @@ const Feed = () => {
 
   const [comment, setComment] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [selectedPostForShare, setSelectedPostForShare] = useState<any>(null);
+  const [shareUsers, setShareUsers] = useState<any[]>([]);
+  const [shareUsersLoading, setShareUsersLoading] = useState(false);
+  const [searchShareQuery, setSearchShareQuery] = useState("");
 
   useEffect(() => {
     const getAllPost = async () => {
@@ -61,48 +68,61 @@ const Feed = () => {
     }
   };
 
-  const handleSharePost = async (post: any) => {
-    try {
-      // Check if Web Share API is available
-      if (navigator.share && navigator.canShare) {
-        // Fetch the image blob
-        const response = await fetch(post.Image?.url);
-        const blob = await response.blob();
-        const file = new File([blob], `post-${post._id}.jpg`, { type: 'image/jpeg' });
+  const handleOpenShareDialog = async (post: any) => {
+    setSelectedPostForShare(post);
+    setSearchShareQuery("");
+    setShareUsers([]);
+    setShareDialogOpen(true);
+  };
 
-        // Check if the file can be shared
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: post.caption || 'Check out this post!',
-          });
-          toast.success('Post shared successfully!');
-        } else {
-          // Fallback: download the image
-          downloadImage(post.Image?.url, `post-${post._id}.jpg`);
-          toast.success('Image downloaded to your device!');
-        }
-      } else {
-        // Fallback for browsers that don't support Web Share API
-        downloadImage(post.Image?.url, `post-${post._id}.jpg`);
-        toast.success('Image downloaded to your device!');
-      }
-    } catch (error: any) {
-      if (error.name !== 'AbortError') {
-        console.error('Share error:', error);
-        downloadImage(post.Image?.url, `post-${post._id}.jpg`);
-        toast.success('Image downloaded to your device!');
-      }
+  const fetchShareUsers = async (query: string) => {
+    if (!query.trim()) {
+      setShareUsers([]);
+      return;
+    }
+    
+    setShareUsersLoading(true);
+    try {
+      const response = await axios.get(
+        `${BASE_API_URL}/users/search?q=${encodeURIComponent(query)}`,
+        { withCredentials: true }
+      );
+      setShareUsers(response.data.data.users || []);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast.error("Failed to load users");
+      setShareUsers([]);
+    } finally {
+      setShareUsersLoading(false);
     }
   };
 
-  const downloadImage = (url: string, filename: string) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleSearchShare = (query: string) => {
+    setSearchShareQuery(query);
+    fetchShareUsers(query);
+  };
+
+  const handleShareToUser = async (targetUserId: string) => {
+    if (!selectedPostForShare) return;
+
+    try {
+      await axios.post(
+        `${BASE_API_URL}/messages/send`,
+        {
+          recipientId: targetUserId,
+          image: selectedPostForShare.Image?.url,
+          text: selectedPostForShare.caption || "Check out this post!",
+        },
+        { withCredentials: true }
+      );
+
+      toast.success("Post shared successfully!");
+      setShareDialogOpen(false);
+      setSelectedPostForShare(null);
+    } catch (error) {
+      console.error("Error sharing post:", error);
+      toast.error("Failed to share post");
+    }
   };
 
   const handleComment = async (id: string) => {
@@ -181,7 +201,7 @@ const Feed = () => {
                 )}
                 <MessageCircle className="cursor-pointer" />
                 <Share2 
-                  onClick={() => handleSharePost(post)}
+                  onClick={() => handleOpenShareDialog(post)}
                   className="cursor-pointer"
                   title="Share post"
                 />
@@ -229,6 +249,61 @@ const Feed = () => {
           </div>
         );
       })}
+
+      {/* Share Dialog - Outside the map loop */}
+      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogTitle>Share Post</DialogTitle>
+          <div className="space-y-4">
+            <div>
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchShareQuery}
+                onChange={(e) => handleSearchShare(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            
+            {shareUsersLoading ? (
+              <div className="flex justify-center py-4">
+                <Loader className="animate-spin" />
+              </div>
+            ) : shareUsers.length === 0 ? (
+              <div className="text-center py-4 text-gray-500">
+                {searchShareQuery ? "No users found" : "Search for users to share"}
+              </div>
+            ) : (
+              <div className="max-h-96 overflow-y-auto space-y-2">
+                {shareUsers.map((shareUser) => (
+                  <div
+                    key={shareUser._id}
+                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage
+                          src={shareUser.profilePicture}
+                          className="h-full w-full"
+                        />
+                        <AvatarFallback>{shareUser.username[0]}</AvatarFallback>
+                      </Avatar>
+                      <p className="font-semibold text-sm">{shareUser.username}</p>
+                    </div>
+                    <Button
+                      onClick={() => handleShareToUser(shareUser._id)}
+                      size="sm"
+                      variant="default"
+                    >
+                      Share
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

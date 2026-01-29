@@ -9,6 +9,7 @@ import { RootState } from "@/store/store";
 import { toast } from "sonner";
 import { Send } from "lucide-react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 interface User {
   _id: string;
@@ -20,7 +21,8 @@ interface Message {
   _id: string;
   sender: User;
   recipient: User;
-  text: string;
+  text?: string;
+  image?: string;
   isRead: boolean;
   createdAt: string;
 }
@@ -270,7 +272,18 @@ const MessagesPage = () => {
                           : "bg-gray-200 text-gray-800"
                       }`}
                     >
-                      <p className="text-sm">{msg.text}</p>
+                      {msg.image && (
+                        <div className="mb-2">
+                          <Image
+                            src={msg.image}
+                            alt="Shared image"
+                            width={200}
+                            height={200}
+                            className="rounded-lg max-w-xs h-auto"
+                          />
+                        </div>
+                      )}
+                      {msg.text && <p className="text-sm">{msg.text}</p>}
                       <p
                         className={`text-xs mt-1 ${
                           msg.sender._id === user?._id

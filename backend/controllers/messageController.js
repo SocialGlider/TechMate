@@ -117,10 +117,10 @@ exports.getMessages = catchAsync(async(req,res,next)=>{
 
 exports.sendMessage = catchAsync(async(req,res,next)=>{
     const loginUserId = req.user._id;
-    const { recipientId, text } = req.body;
+    const { recipientId, text, image } = req.body;
 
-    if(!recipientId || !text){
-        return next(new AppError("Recipient and message text are required",400));
+    if(!recipientId || (!text && !image)){
+        return next(new AppError("Recipient and either message text or image is required",400));
     }
 
     if(loginUserId.toString() === recipientId.toString()){
@@ -136,7 +136,8 @@ exports.sendMessage = catchAsync(async(req,res,next)=>{
     const message = await Message.create({
         sender: loginUserId,
         recipient: recipientId,
-        text: text.trim(),
+        text: text ? text.trim() : undefined,
+        image: image ? image.trim() : undefined,
         isRead: false
     });
 
